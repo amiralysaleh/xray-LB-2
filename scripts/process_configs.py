@@ -53,7 +53,7 @@ def process_configs():
                 persian_datetime = now.strftime("%Y-%m-%d %H:%M")
                 
                 # Update the remarks
-                config_json['remarks'] = f"（ΦωΦ）({persian_datetime})"
+                config_json['remarks'] = f"𓅃 | ({persian_datetime})"
                 
                 # Convert back to formatted JSON string
                 formatted_json = json.dumps(config_json, ensure_ascii=False, indent=2)
