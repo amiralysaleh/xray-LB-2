@@ -3,7 +3,7 @@ import json
 import jdatetime
 
 def get_raw_configs():
-    url = "https://raw.githubusercontent.com/roosterkid/openproxylist/refs/heads/main/V2RAY_RAW.txt"
+    url = "https://raw.githubusercontent.com/mahdibland/ShadowsocksAggregator/master/Eternity.txt"
     try:
         response = requests.get(url)
         response.encoding = 'utf-8'
@@ -53,7 +53,7 @@ def process_configs():
                 persian_datetime = now.strftime("%Y-%m-%d %H:%M")
                 
                 # Update the remarks
-                config_json['remarks'] = f"Xray-LB ({persian_datetime})"
+                config_json['remarks'] = f"（ΦωΦ）({persian_datetime})"
                 
                 # Convert back to formatted JSON string
                 formatted_json = json.dumps(config_json, ensure_ascii=False, indent=2)
