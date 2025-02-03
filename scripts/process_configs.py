@@ -4,6 +4,8 @@ import jdatetime
 import base64
 import re
 import random
+import pytz
+from datetime import datetime
 
 MAX_CONFIGS = 150
 
@@ -23,7 +25,7 @@ def decode_base64_content(content):
         return [content]  # Return original content if decoding fails
 
 def get_raw_configs():
-    url = "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/channels/networks/grpc"
+    url = "https://github.com/Epodonios/v2ray-configs/raw/main/Splitted-By-Protocol/vless.txt"
     try:
         response = requests.get(url)
         response.encoding = 'utf-8'
@@ -90,9 +92,13 @@ def process_configs():
                 # Parse the JSON string from result
                 config_json = json.loads(result['result'])
                 
-                # Get current Persian date and time
-                now = jdatetime.datetime.now()
-                persian_datetime = now.strftime("%Y-%m-%d %H:%M")
+                # Get current Tehran time and convert to Persian date
+                tehran_tz = pytz.timezone('Asia/Tehran')
+                tehran_time = datetime.now(tehran_tz)
+                persian_date = jdatetime.datetime.fromgregorian(
+                    datetime=tehran_time
+                )
+                persian_datetime = persian_date.strftime("%Y-%m-%d %H:%M")
                 
                 # Update the remarks
                 config_json['remarks'] = f"𓅃 | ({persian_datetime})"
@@ -103,7 +109,7 @@ def process_configs():
                 # Save the result
                 with open('v2ray_processed.txt', 'w', encoding='utf-8') as f:
                     f.write(formatted_json)
-                print("Successfully saved processed configs with Persian datetime")
+                print("Successfully saved processed configs with Tehran time")
             else:
                 print("Error: Response does not contain 'result' field")
                 print(f"Response content: {result}")
