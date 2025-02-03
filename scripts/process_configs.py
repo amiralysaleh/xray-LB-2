@@ -3,7 +3,7 @@ import json
 import jdatetime
 
 def get_raw_configs():
-    url = "https://raw.githubusercontent.com/mahdibland/ShadowsocksAggregator/master/Eternity.txt"
+    url = "https://github.com/Epodonios/v2ray-configs/raw/main/Splitted-By-Protocol/vmess.txt"
     try:
         response = requests.get(url)
         response.encoding = 'utf-8'
