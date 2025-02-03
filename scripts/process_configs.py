@@ -3,31 +3,54 @@ import json
 import jdatetime
 import base64
 import re
+import random
+
+MAX_CONFIGS = 150
 
 def is_base64(s):
     # Check if string matches base64 pattern
     pattern = r'^[A-Za-z0-9+/]*={0,2}$'
     return bool(re.match(pattern, s)) and len(s) % 4 == 0
 
-def decode_if_base64(config):
+def decode_base64_content(content):
     try:
-        if is_base64(config):
-            decoded = base64.b64decode(config).decode('utf-8')
-            return decoded
-        return config
+        if is_base64(content):
+            decoded = base64.b64decode(content).decode('utf-8')
+            # Split decoded content into lines and filter empty lines
+            return [line for line in decoded.split('\n') if line.strip()]
+        return [content]  # Return as single-item list if not base64
     except:
-        return config
+        return [content]  # Return original content if decoding fails
 
 def get_raw_configs():
-    url = "https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt"
+    url = "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/channels/networks/grpc"
     try:
         response = requests.get(url)
         response.encoding = 'utf-8'
         if response.status_code == 200:
-            configs = response.text.strip().split('\n')
-            # Decode each config if it's base64 encoded
-            decoded_configs = [decode_if_base64(config) for config in configs]
-            return decoded_configs
+            content = response.text.strip()
+            
+            # First, try to decode the entire content if it's base64
+            all_configs = []
+            if is_base64(content):
+                print("Detected base64 encoded content, decoding...")
+                all_configs = decode_base64_content(content)
+            else:
+                # If not base64, split by lines and try each line
+                lines = content.split('\n')
+                for line in lines:
+                    decoded_lines = decode_base64_content(line.strip())
+                    all_configs.extend(decoded_lines)
+            
+            print(f"Total configs after decoding: {len(all_configs)}")
+            
+            # Apply the limit after decoding
+            if len(all_configs) > MAX_CONFIGS:
+                all_configs = random.sample(all_configs, MAX_CONFIGS)
+                print(f"Limited to {MAX_CONFIGS} random configs")
+            
+            return all_configs
+            
         print(f"Failed to get configs. Status code: {response.status_code}")
         return []
     except Exception as e:
@@ -40,7 +63,7 @@ def process_configs():
         print("No configs found!")
         return
     
-    print(f"Found {len(configs)} configs")
+    print(f"Processing {len(configs)} configs")
     
     try:
         url = "https://surfboardv2ray.pythonanywhere.com/convert"
