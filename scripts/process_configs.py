@@ -1,14 +1,33 @@
 import requests
 import json
 import jdatetime
+import base64
+import re
+
+def is_base64(s):
+    # Check if string matches base64 pattern
+    pattern = r'^[A-Za-z0-9+/]*={0,2}$'
+    return bool(re.match(pattern, s)) and len(s) % 4 == 0
+
+def decode_if_base64(config):
+    try:
+        if is_base64(config):
+            decoded = base64.b64decode(config).decode('utf-8')
+            return decoded
+        return config
+    except:
+        return config
 
 def get_raw_configs():
-    url = "https://github.com/Epodonios/v2ray-configs/raw/main/Splitted-By-Protocol/vmess.txt"
+    url = "https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt"
     try:
         response = requests.get(url)
         response.encoding = 'utf-8'
         if response.status_code == 200:
-            return response.text.strip().split('\n')
+            configs = response.text.strip().split('\n')
+            # Decode each config if it's base64 encoded
+            decoded_configs = [decode_if_base64(config) for config in configs]
+            return decoded_configs
         print(f"Failed to get configs. Status code: {response.status_code}")
         return []
     except Exception as e:
