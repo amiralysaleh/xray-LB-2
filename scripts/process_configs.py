@@ -7,7 +7,7 @@ import random
 import pytz
 from datetime import datetime
 
-MAX_CONFIGS = 150
+MAX_CONFIGS = 60
 
 def is_base64(s):
     # Check if string matches base64 pattern
@@ -25,7 +25,7 @@ def decode_base64_content(content):
         return [content]  # Return original content if decoding fails
 
 def get_raw_configs():
-    url = "https://github.com/Epodonios/v2ray-configs/raw/main/Splitted-By-Protocol/vless.txt"
+    url = "https://raw.githubusercontent.com/roosterkid/openproxylist/refs/heads/main/V2RAY_RAW.txt"
     try:
         response = requests.get(url)
         response.encoding = 'utf-8'
